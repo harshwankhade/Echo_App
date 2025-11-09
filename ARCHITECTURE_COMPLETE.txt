@@ -1,0 +1,369 @@
+/**
+ * ╔══════════════════════════════════════════════════════════════════════════════╗
+ * ║                                                                              ║
+ * ║              ECHOAPP - COMPLETE MVVM ARCHITECTURE STRUCTURE                 ║
+ * ║                                                                              ║
+ * ║                      Phase 0: Project Setup Complete ✓                      ║
+ * ║                                                                              ║
+ * ╚══════════════════════════════════════════════════════════════════════════════╝
+ *
+ *
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *                          COMPLETE FILE STRUCTURE
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *
+ *
+ * com/example/echo_app/
+ * │
+ * ├─── 📱 ui/                          [PRESENTATION LAYER]
+ * │    │
+ * │    ├── MainActivity.java            (Main entry point Activity)
+ * │    ├── ChatFragment.java            (Chat display & interaction)
+ * │    └── LoginFragment.java           (User authentication interface)
+ * │
+ * ├─── 🧠 viewmodel/                   [BUSINESS LOGIC LAYER]
+ * │    │
+ * │    ├── MainViewModel.java           (App state management)
+ * │    ├── ChatViewModel.java           (Chat operations logic)
+ * │    └── LoginViewModel.java          (Authentication logic)
+ * │
+ * ├─── 📦 model/                       [DATA ENTITY LAYER]
+ * │    │
+ * │    ├── User.java                    (User POJO - id, email, name, profile)
+ * │    ├── Message.java                 (Message POJO - id, sender, content, timestamp)
+ * │    └── Group.java                   (Group POJO - id, name, members, admin)
+ * │
+ * ├─── 🔄 repository/                  [DATA ACCESS LAYER]
+ * │    │
+ * │    ├── UserRepository.java          (User CRUD operations)
+ * │    ├── MessageRepository.java       (Message operations & real-time updates)
+ * │    └── AuthRepository.java          (Authentication & session management)
+ * │
+ * ├─── 🔥 data/                        [FIREBASE INTEGRATION LAYER]
+ * │    │
+ * │    ├── FirebaseService.java         (Firebase API wrapper)
+ * │    │   └─ Wraps: Auth, Firestore, Storage
+ * │    │
+ * │    └── FirestoreConstants.java      (DB constants & field names)
+ * │
+ * ├─── 💉 di/                          [DEPENDENCY INJECTION LAYER]
+ * │    │
+ * │    └── AppModule.java               (Singleton provider for all dependencies)
+ * │
+ * └─── 🔧 utils/                       [UTILITIES LAYER]
+ *      │
+ *      ├── Constants.java               (App-wide constants)
+ *      ├── DateUtils.java               (Date formatting & time operations)
+ *      └── NetworkUtils.java            (Network connectivity utilities)
+ *
+ *
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *                            DATA FLOW DIAGRAM
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *
+ *
+ *              ┌─────────────────────────────────────────┐
+ *              │      USER ACTION IN UI                  │
+ *              │  (Click button, type message, etc.)     │
+ *              └──────────────┬──────────────────────────┘
+ *                             │
+ *                             ▼
+ *              ┌─────────────────────────────────────────┐
+ *              │   📱 Fragment/Activity (UI Layer)       │
+ *              │  ├─ Displays UI elements               │
+ *              │  ├─ Captures user input                │
+ *              │  └─ Calls ViewModel method             │
+ *              └──────────────┬──────────────────────────┘
+ *                             │
+ *                             ▼
+ *              ┌─────────────────────────────────────────┐
+ *              │   🧠 ViewModel (Business Logic Layer)   │
+ *              │  ├─ Processes business logic           │
+ *              │  ├─ Calls Repository method            │
+ *              │  └─ Updates LiveData<> state           │
+ *              └──────────────┬──────────────────────────┘
+ *                             │
+ *                             ▼
+ *              ┌─────────────────────────────────────────┐
+ *              │   🔄 Repository (Data Access Layer)     │
+ *              │  ├─ Abstracts data sources             │
+ *              │  ├─ Calls FirebaseService              │
+ *              │  ├─ Transforms data                    │
+ *              │  └─ Manages cache                      │
+ *              └──────────────┬──────────────────────────┘
+ *                             │
+ *                             ▼
+ *              ┌─────────────────────────────────────────┐
+ *              │   🔥 FirebaseService (Data Layer)       │
+ *              │  ├─ Firebase Authentication             │
+ *              │  ├─ Firestore Database Operations       │
+ *              │  └─ Firebase Storage Operations         │
+ *              └──────────────┬──────────────────────────┘
+ *                             │
+ *                             ▼
+ *              ┌─────────────────────────────────────────┐
+ *              │   ☁️  FIREBASE SERVICES                 │
+ *              │  ├─ Authentication                      │
+ *              │  ├─ Firestore                           │
+ *              │  └─ Storage                             │
+ *              └──────────────┬──────────────────────────┘
+ *                             │
+ *                   ┌─────────┴──────────┐
+ *                   │                    │
+ *         ┌─────────▼────────┐  ┌───────▼────────┐
+ *         │    Response      │  │  Real-time     │
+ *         │   from Cloud     │  │  Updates via   │
+ *         │                  │  │  Listeners     │
+ *         └─────────┬────────┘  └───────┬────────┘
+ *                   │                    │
+ *                   │      ┌─────────────┘
+ *                   │      │
+ *         ┌─────────▼──────▼─────────┐
+ *         │  Repository receives     │
+ *         │  and processes data      │
+ *         └─────────┬────────────────┘
+ *                   │
+ *                   ▼
+ *         ┌─────────────────────────┐
+ *         │  ViewModel updates      │
+ *         │  LiveData<T>            │
+ *         └─────────┬───────────────┘
+ *                   │
+ *                   ▼
+ *         ┌─────────────────────────┐
+ *         │  Fragment/Activity      │
+ *         │  observes LiveData      │
+ *         └─────────┬───────────────┘
+ *                   │
+ *                   ▼
+ *         ┌─────────────────────────┐
+ *         │  🔄 UI UPDATED          │
+ *         │  showing new data       │
+ *         └─────────────────────────┘
+ *
+ *
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *                         LAYER RESPONSIBILITIES
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *
+ *
+ * 📱 UI LAYER (Activities/Fragments)
+ * ──────────────────────────────────────────────────────────────────────────────
+ * Responsibility: Present data to user and handle interactions
+ *
+ *  ✓ Display UI elements (buttons, lists, text fields, etc.)
+ *  ✓ Capture user input and gestures
+ *  ✓ Observe ViewModels via LiveData
+ *  ✓ Update UI when state changes
+ *  ✓ Delegate actions to ViewModel
+ *  ✗ NO business logic
+ *  ✗ NO direct Firebase calls
+ *  ✗ NO data transformation
+ *
+ * Files: MainActivity.java, ChatFragment.java, LoginFragment.java
+ *
+ *
+ * 🧠 VIEWMODEL LAYER
+ * ──────────────────────────────────────────────────────────────────────────────
+ * Responsibility: Manage business logic and expose state as LiveData
+ *
+ *  ✓ Implement business logic
+ *  ✓ Manage state via LiveData<T>
+ *  ✓ Communicate with Repositories
+ *  ✓ Handle user actions from UI
+ *  ✓ Survive configuration changes
+ *  ✓ Transform data for UI consumption
+ *  ✗ NO UI references (no Context, no View)
+ *  ✗ NO direct Firebase calls
+ *
+ * Files: MainViewModel.java, ChatViewModel.java, LoginViewModel.java
+ *
+ *
+ * 📦 MODEL LAYER (POJOs/Entities)
+ * ──────────────────────────────────────────────────────────────────────────────
+ * Responsibility: Define data structures
+ *
+ *  ✓ Store properties with getters/setters
+ *  ✓ Support Firebase serialization
+ *  ✓ Simple data containers
+ *  ✗ NO business logic
+ *  ✗ NO repository calls
+ *  ✗ NO context dependencies
+ *
+ * Files: User.java, Message.java, Group.java
+ *
+ *
+ * 🔄 REPOSITORY LAYER
+ * ──────────────────────────────────────────────────────────────────────────────
+ * Responsibility: Abstract data source complexity and provide clean API
+ *
+ *  ✓ Provide CRUD operations
+ *  ✓ Abstract Firebase complexity
+ *  ✓ Manage caching strategies
+ *  ✓ Transform data between layers
+ *  ✓ Handle error/exception mapping
+ *  ✓ Coordinate multiple data sources
+ *  ✗ NO UI knowledge
+ *  ✗ NO direct ViewModel knowledge
+ *
+ * Files: UserRepository.java, MessageRepository.java, AuthRepository.java
+ *
+ *
+ * 🔥 DATA LAYER (Firebase Integration)
+ * ──────────────────────────────────────────────────────────────────────────────
+ * Responsibility: Wrap Firebase APIs and prevent leakage
+ *
+ *  ✓ Encapsulate Firebase Authentication
+ *  ✓ Encapsulate Firestore operations
+ *  ✓ Encapsulate Firebase Storage
+ *  ✓ Handle Firebase errors
+ *  ✓ Manage listeners and callbacks
+ *  ✗ NO business logic
+ *  ✗ NO UI knowledge
+ *
+ * Files: FirebaseService.java, FirestoreConstants.java
+ *
+ *
+ * 💉 DEPENDENCY INJECTION LAYER
+ * ──────────────────────────────────────────────────────────────────────────────
+ * Responsibility: Provide singleton instances and manage dependencies
+ *
+ *  ✓ Create singleton instances
+ *  ✓ Provide dependencies to all layers
+ *  ✓ Manage object lifecycle
+ *  ✓ Centralize dependency creation
+ *
+ * Files: AppModule.java
+ *
+ *
+ * 🔧 UTILITIES LAYER
+ * ─────────────────────────────────────────────────────────────────���────────────
+ * Responsibility: Provide reusable utility methods
+ *
+ *  ✓ Helper functions
+ *  ✓ Shared constants
+ *  ✓ Format/Parse operations
+ *  ✓ Network checks
+ *
+ * Files: Constants.java, DateUtils.java, NetworkUtils.java
+ *
+ *
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *                        IMPLEMENTATION ROADMAP
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *
+ * Phase 1: FIREBASE INTEGRATION
+ * ├─ Add Firebase dependencies to build.gradle
+ * ├─ Download google-services.json from Firebase Console
+ * ├─ Configure Firebase in Application class
+ * ├─ Implement FirebaseService methods
+ * └─ Set up Firestore collections structure
+ *
+ * Phase 2: DATA MODELS
+ * ├─ Add properties to User.java
+ * ├─ Add properties to Message.java
+ * ├─ Add properties to Group.java
+ * └─ Add serialization annotations (@Keep, @PropertyName)
+ *
+ * Phase 3: REPOSITORY IMPLEMENTATION
+ * ├─ Implement UserRepository CRUD methods
+ * ├─ Implement MessageRepository methods
+ * ├─ Implement AuthRepository methods
+ * ├─ Add caching logic
+ * └─ Add error handling
+ *
+ * Phase 4: VIEWMODEL IMPLEMENTATION
+ * ├─ Define LiveData<> in MainViewModel
+ * ├─ Define LiveData<> in ChatViewModel
+ * ├─ Define LiveData<> in LoginViewModel
+ * ├─ Add business logic methods
+ * └─ Add state management
+ *
+ * Phase 5: UI IMPLEMENTATION
+ * ├─ Create XML layouts
+ * ├─ Implement MainActivity logic
+ * ├─ Implement ChatFragment UI
+ * ├─ Implement LoginFragment UI
+ * ├─ Set up data binding
+ * └─ Add UI observers for LiveData
+ *
+ *
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *                           KEY DESIGN PATTERNS
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *
+ * ✓ MVVM (Model-View-ViewModel)
+ *   └─ Separates presentation logic from business logic
+ *
+ * ✓ Repository Pattern
+ *   └─ Abstracts data source complexity
+ *
+ * ✓ Dependency Injection
+ *   └─ Loose coupling, easier testing
+ *
+ * ✓ LiveData Pattern
+ *   └─ Reactive, lifecycle-aware data binding
+ *
+ * ✓ Singleton Pattern
+ *   └─ Single instance for shared resources
+ *
+ * ✓ Observer Pattern
+ *   └─ UI observes state changes automatically
+ *
+ *
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *                            FILE STATISTICS
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *
+ * Total Java Files Created: 19
+ *
+ * ├─ UI Layer:              3 files  (MainActivity, ChatFragment, LoginFragment)
+ * ├─ ViewModel Layer:        3 files  (Main, Chat, Login ViewModels)
+ * ├─ Model Layer:            3 files  (User, Message, Group POJOs)
+ * ├─ Repository Layer:       3 files  (User, Message, Auth Repositories)
+ * ├─ Data Layer:             2 files  (FirebaseService, FirestoreConstants)
+ * ├─ DI Layer:               1 file   (AppModule)
+ * ├─ Utils Layer:            3 files  (Constants, DateUtils, NetworkUtils)
+ * └─ Original File:          1 file   (MainActivity.java - moved to ui/)
+ *
+ *
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *                              QUICK START
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *
+ * 1. All placeholder files are created with JavaDoc comments
+ * 2. TODO comments guide implementation
+ * 3. Each file has clear responsibilities documented
+ * 4. No circular dependencies - layers only depend on lower layers
+ * 5. Ready for Phase 1: Firebase Integration
+ *
+ *
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *                          IMPORTANT PRINCIPLES
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *
+ * 1. UI depends on ViewModel, ViewModel doesn't depend on UI
+ * 2. ViewModel depends on Repository, Repository doesn't depend on ViewModel
+ * 3. Repository depends on Data Layer, Data Layer doesn't depend on Repository
+ * 4. All layers can depend on Utils and Models
+ * 5. No layer should have circular dependencies
+ * 6. Dependency Injection provides all dependencies
+ *
+ *
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *                             ✅ COMPLETE
+ * ═══════════════════════════════════════════════════════════════════════════════
+ *
+ * Phase 0: Project Setup & Architecture Foundation
+ * Status: ✅ COMPLETE
+ *
+ * All packages created ✓
+ * All base classes created ✓
+ * Documentation complete ✓
+ * Clean architecture established ✓
+ *
+ * Ready for Phase 1: Firebase Integration
+ *
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
+
