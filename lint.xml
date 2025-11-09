@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    lint.xml
+
+    Purpose: Custom Android Lint configuration for EchoApp
+
+    This file defines custom lint rules and their severity levels for the project.
+    Lint is Android's static analysis tool that catches potential bugs and usability issues.
+
+    Configuration:
+    - Defines which lint issues to warn, error, or ignore
+    - Can be project-wide or module-specific
+    - Issues can have different severities: ignore, warning, error
+
+    Usage:
+    - Place in project root directory
+    - Referenced in app/build.gradle.kts lint configuration
+    - Run: ./gradlew lint
+    - Reports generated in: app/build/reports/lint-results.html
+
+    Documentation:
+    https://developer.android.com/studio/write/lint
+-->
+<lint>
+    <!--
+        Issue: MissingTranslation
+        Severity: warning
+        Reason: We're in Phase 0, not all strings need translations yet.
+                This will be enforced later in production builds.
+    -->
+    <issue id="MissingTranslation" severity="warning" />
+
+    <!--
+        Issue: HardcodedText
+        Severity: error
+        Reason: Hardcoded strings should use string resources for internationalization.
+                This helps with localization and consistency.
+    -->
+    <issue id="HardcodedText" severity="error" />
+
+    <!--
+        Issue: ExtraTranslation
+        Severity: warning
+        Reason: Extra translations that aren't used can clutter the project.
+    -->
+    <issue id="ExtraTranslation" severity="warning" />
+
+    <!--
+        Issue: UnusedResources
+        Severity: warning
+        Reason: Unused resources should be identified for cleanup.
+                Set to warning to allow development flexibility.
+    -->
+    <issue id="UnusedResources" severity="warning" />
+
+    <!--
+        Issue: DefaultLocale
+        Severity: error
+        Reason: Using default locale can cause issues with localization.
+                Should use explicit locale in String.format(), toUpperCase(), etc.
+    -->
+    <issue id="DefaultLocale" severity="error" />
+
+    <!--
+        Issue: ViewHolder
+        Severity: warning
+        Reason: RecyclerView adapters should use ViewHolder pattern for performance.
+    -->
+    <issue id="ViewHolder" severity="warning" />
+
+    <!--
+        Issue: DipsUsage
+        Severity: warning
+        Reason: Should use dp (density-independent pixels) instead of pixels.
+    -->
+    <issue id="DipsUsage" severity="warning" />
+
+    <!--
+        Issue: RtlSymmetry
+        Severity: warning
+        Reason: Right-to-left (RTL) language support requires symmetric layouts.
+    -->
+    <issue id="RtlSymmetry" severity="warning" />
+
+    <!--
+        Issue: PrivateResource
+        Severity: warning
+        Reason: Using private resources can cause issues if they change.
+    -->
+    <issue id="PrivateResource" severity="warning" />
+
+    <!--
+        Issue: GradleCompatible
+        Severity: error
+        Reason: Gradle dependencies must be compatible.
+    -->
+    <issue id="GradleCompatible" severity="error" />
+
+    <!--
+        Issue: NotProguarded
+        Severity: warning
+        Reason: Libraries that aren't ProGuarded can be flagged (Phase 1+).
+    -->
+    <issue id="NotProguarded" severity="warning" />
+
+</lint>
+

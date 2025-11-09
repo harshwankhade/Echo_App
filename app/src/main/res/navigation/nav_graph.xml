@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <!--
+        NAVIGATION GRAPH FOR ECHOAPP
+
+        Architecture: Single-Activity with Fragments + Navigation Component
+
+        Flow:
+        - User starts at LoginFragment (splash)
+        - Can navigate to RegisterFragment to create account
+        - After login/registration, navigates to ChatListFragment
+        - From ChatListFragment can view individual chats (ChatFragment)
+        - Or navigate to ProfileFragment
+        - Can logout and return to LoginFragment
+    -->
+
+    <!-- LOGIN FRAGMENT: Entry point for unauthenticated users -->
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.echo_app.ui.LoginFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_chatListFragment"
+            app:destination="@id/chatListFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- REGISTER FRAGMENT: Registration flow -->
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.echo_app.ui.RegisterFragment"
+        android:label="Register"
+        tools:layout="@layout/fragment_register">
+        <action
+            android:id="@+id/action_registerFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_registerFragment_to_chatListFragment"
+            app:destination="@id/chatListFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- CHAT LIST FRAGMENT: Main screen showing all conversations -->
+    <fragment
+        android:id="@+id/chatListFragment"
+        android:name="com.example.echo_app.ui.ChatListFragment"
+        android:label="Chats"
+        tools:layout="@layout/fragment_chat_list">
+        <action
+            android:id="@+id/action_chatListFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_chatListFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_chatListFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/chatListFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- CHAT FRAGMENT: Individual conversation screen -->
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.echo_app.ui.ChatFragment"
+        android:label="Chat"
+        tools:layout="@layout/fragment_chat">
+        <argument
+            android:name="chatId"
+            app:argType="string"
+            android:defaultValue="null" />
+        <action
+            android:id="@+id/action_chatFragment_to_chatListFragment"
+            app:destination="@id/chatListFragment" />
+    </fragment>
+
+    <!-- PROFILE FRAGMENT: User profile screen -->
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.echo_app.ui.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_chatListFragment"
+            app:destination="@id/chatListFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/chatListFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+</navigation>
+

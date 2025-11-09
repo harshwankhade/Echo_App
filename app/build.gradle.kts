@@ -33,19 +33,50 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    // --- Android Lint Configuration ---
+    lint {
+        abortOnError = true
+        warningsAsErrors = true
+        checkReleaseBuilds = true
+        disable += "MissingTranslation"
+    }
 }
 
 dependencies {
+
+    // --- AndroidX Core ---
+    implementation(libs.androidx.core)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+
+    // --- Lifecycle (ViewModel + LiveData) ---
+    implementation(libs.lifecycle.viewmodel)
+    implementation(libs.lifecycle.livedata)
+    implementation(libs.lifecycle.runtime)
+
+    // --- Firebase (via BOM for version management) ---
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
-    implementation(libs.firebase.database)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
+    implementation(libs.firebase.messaging)
+
+    // --- WorkManager (Background tasks) ---
+    implementation(libs.work.runtime)
+
+    // --- Navigation Component ---
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
+
+    // --- Glide (Image loading & caching) ---
+    implementation(libs.glide)
+    annotationProcessor(libs.glide.compiler)
+
+    // --- Testing ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation(platform("com.google.firebase:firebase-bom:34.5.0"))
 }
